@@ -1,14 +1,26 @@
 FROM rocker/r-ver:4.3.1
 
-# install plumber and needed R packages
-RUN R -e "install.packages(c('plumber', 'jsonlite', 'magick', 'data.table', 'stringr'))"
+# Install system libraries for magick and image processing
+RUN apt-get update && apt-get install -y \
+    libmagick++-dev \
+    imagemagick \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# copy all API files into the container
+# Install R packages
+RUN R -e "install.packages(c('plumber', 'jsonlite', 'data.table', 'stringr'), repos='https://cloud.r-project.org')"
+
+# Install magick separately AFTER system libs are installed
+RUN R -e "install.packages('magick', repos='https://cloud.r-project.org')"
+
+# Copy project files
 WORKDIR /app
 COPY . /app
 
-# plumber listens on port 8080
+# Expose plumber API port
 EXPOSE 8080
 
-# start the API
+# Start API
 CMD ["R", "-e", "pr <- plumber::plumb('plumber.R'); pr$run(host='0.0.0.0', port=8080)"]
