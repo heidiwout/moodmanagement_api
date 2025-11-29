@@ -1,24 +1,24 @@
 FROM rocker/r-ver:4.3.1
 
-# Install system libraries for magick and general R packages
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libmagick++-dev \
-    imagemagick \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
+    libmagick++-dev \
+    imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
-# Install R packages (always install plumber in a separate line!)
+# Install R packages (important: separate installs!)
 RUN R -e "install.packages('plumber', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('jsonlite', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('data.table', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('stringr', repos='https://cloud.r-project.org')"
 
-# Install magick (AFTER system libs)
+# magick MUST be installed after system libs
 RUN R -e "install.packages('magick', repos='https://cloud.r-project.org')"
 
-# Copy all code into the container
+# Copy code
 WORKDIR /app
 COPY . /app
 
