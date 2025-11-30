@@ -15,6 +15,7 @@ RUN R -e "install.packages('plumber', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('jsonlite', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('data.table', repos='https://cloud.r-project.org')"
 RUN R -e "install.packages('stringr', repos='https://cloud.r-project.org')"
+RUN R -e "install.packages(c('httr','gh'), repos='https://cloud.r-project.org')"
 
 # magick must come after system libs
 RUN R -e "install.packages('magick', repos='https://cloud.r-project.org')"
