@@ -19,25 +19,47 @@ bereken_scores <- function(input) {
   #  E_mail
   
   # -------------------------------------------------------------
-  # 3) Scorekolommen identificeren
+  # 3) Scorekolommen identificeren (alle vragen die ik nodig heb)
   # Alle vragen starten met "hoe"
   # Wix maakt lowercase namen → correct
   # -------------------------------------------------------------
-  cols <- grep("^Hoe", names(dt), ignore.case = TRUE, value = TRUE)
-  
+  #cols <- grep("^Hoe", names(dt), ignore.case = TRUE, value = TRUE)
+  cols <- c(
+    "Hoe herkenbaar zijn deze gevoelens wanneer je onder druk staat?",
+    "Hoe ga jij om met situaties die je niet kan controleren?",
+    "Hoe kijk jij naar jezelf wanneer je emotioneel bent?",
+    "Hoe ga jij om met innerlijke onrust?",
+    "Hoe makkelijk kan jij luisteren naar wat je emoties jou vertellen?",
+    "Hoe ervaar jij stress die zich opstapelt?",
+    "Hoe belangrijk is emotionele veiligheid voor jou?",
+    "Hoe herkenbaar zijn deze positieve verlangens?",
+    "Hoe aanwezig voel je je in het dagelijks leven?",
+    "Hoe stabiel voel je je emotioneel en energetisch?",
+    "Hoe ga je om met verbinding?",
+    "Hoe ga je om met lange-termijn doelen?",
+    "Hoe creatief voel je je momenteel?",
+    "Hoe gemotiveerd voel je je?",
+    "Hoeveel ruimte is er voor speelsheid in je leven?",
+    "Hoe vrij voel jij je in zelfexpressie?",
+    "Hoe gemakkelijk kan je je geest tot rust brengen?",
+    "Hoe ga je om met stress en overweldiging?",
+    "Hoe moeilijk is het voor jou om echt te ontspannen?",
+    "Hoe ervaar je verbinding met jezelf en anderen?"
+  )
   # -------------------------------------------------------------
-  # 4) Per vraag score berekenen
+  # 4) Per vraag scorekolom toevoegen (score = aantal antwoorden)
   # -------------------------------------------------------------
   for (col in cols) {
-    dt[, paste0(col, "_score") := {
-      x <- get(col)
-      if (is.null(x) || is.na(x) || x == "") {
-        0
-      } else {
-        stringr::str_count(x, ";") + 1
-      }
-    }]
+    if (!col %in% names(dt)) {
+      dt[[col]] <- ""   # ontbrekende vraag → lege string → score 0
+    }
+    dt[[paste0(col, "_score")]] <- ifelse(
+      dt[[col]] == "" | is.na(dt[[col]]),
+      0,
+      stringr::str_count(dt[[col]], ";") + 1
+    )
   }
+  
   
   # -------------------------------------------------------------
   # 5) Verzamel scorekolommen + Voornaam + E_mail
