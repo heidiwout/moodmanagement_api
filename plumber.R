@@ -123,13 +123,14 @@ function(req) {
   # 9) Output terug naar Wix automation
   # -----------------------------------
   list(
-    Voornaam        = naam,
-    E_mail          = email,
-    email_text      = email_text,
-    png_url         = png_url,
-    Adaptiv_pct     = scores$Adaptiv_pct,
-    Balance_pct     = scores$Balance_pct,
-    CitrusBliss_pct = scores$CitrusBliss_pct,
-    Serenity_pct    = scores$Serenity_pct
+    Voornaam        = jsonlite::unbox(naam),
+    E_mail          = jsonlite::unbox(email),
+    email_text      = jsonlite::unbox(email_text),
+    png_url         = jsonlite::unbox(png_url),
+    Adaptiv_pct     = jsonlite::unbox(scores$Adaptiv_pct),
+    Balance_pct     = jsonlite::unbox(scores$Balance_pct),
+    CitrusBliss_pct = jsonlite::unbox(scores$CitrusBliss_pct),
+    Serenity_pct    = jsonlite::unbox(scores$Serenity_pct)
   )
+  
 }

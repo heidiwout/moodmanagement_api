@@ -25,9 +25,9 @@ genereer_emailtekst <- function(scores, naam) {
   top_nice <- vapply(top_blends, nice_name, character(1))
   
   # 2. Tekst opbouwen
-  intro <- paste0("Lieve ", naam, ",\n\n",
-                  "Dankjewel om de mood management vragenlijst in te vullen.\n",
-                  "Op basis van jouw antwoorden ontstaat een persoonlijk profiel van hoe jij emotioneel ondersteund kan worden op dit moment.\n\n")
+  # intro <- paste0("Lieve ", naam, ",\n\n",
+  #                 "Dankjewel om de mood management vragenlijst in te vullen.\n",
+  #                 "Op basis van jouw antwoorden ontstaat een persoonlijk profiel van hoe jij emotioneel ondersteund kan worden op dit moment.\n\n")
   
   # 3. Cases: 1 topper, 2 toppers, of alles redelijk gelijk
   body <- ""
@@ -92,6 +92,7 @@ genereer_emailtekst <- function(scores, naam) {
   )
   
   # 5. Samenvoegen (zonder **, dat is voor markdown; voor platte tekst kan je ze weglaten of vervangen)
-  full <- paste0(intro, body, uitleg, afsluit)
+  full <- paste0(#intro, 
+    body, uitleg, afsluit)
   return(full)
 }
