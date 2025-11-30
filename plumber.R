@@ -71,13 +71,13 @@ function(req) {
     }
   }
   
-  # Extra Wix velden (field:xyz)
-  wix_fields <- grep("^field:", names(d), value = TRUE)
-  for (f in wix_fields) {
-    clean_name <- sub("^field:", "", f)
-    flat[[clean_name]] <- d[[f]]
-  }
-  
+  # # Extra Wix velden (field:xyz)
+  # wix_fields <- grep("^field:", names(d), value = TRUE)
+  # for (f in wix_fields) {
+  #   clean_name <- sub("^field:", "", f)
+  #   flat[[clean_name]] <- d[[f]]
+  # }
+  # 
   # Tevens expliciete voornaam & e-mail
   if (!is.null(d$`field:voornaam_24fb`)) {
     flat[["Voornaam"]] <- d$`field:voornaam_24fb`
@@ -85,7 +85,7 @@ function(req) {
   if (!is.null(d$`field:e_mail_b046`)) {
     flat[["E-mail"]] <- d$`field:e_mail_b046`
   }
-  
+
   print("===== FLAT INPUT =====")
   print(flat)
   
