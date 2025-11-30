@@ -23,7 +23,7 @@ bereken_scores <- function(input) {
   # Alle vragen starten met "hoe"
   # Wix maakt lowercase namen → correct
   # -------------------------------------------------------------
-  cols <- grep("^hoe", names(dt), ignore.case = TRUE, value = TRUE)
+  cols <- grep("^Hoe", names(dt), ignore.case = TRUE, value = TRUE)
   
   # -------------------------------------------------------------
   # 4) Per vraag score berekenen
