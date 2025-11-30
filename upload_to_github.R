@@ -9,10 +9,17 @@ upload_to_github <- function(png_path) {
     stop("GitHub environment variables ontbreken.")
   }
   
-  # naam van bestand bepalen
-  fname <- basename(png_path)
-  target_path <- fname  # rechtstreeks in repo root
+    # timestamp aan bestandsnaam toevoegen
+  ts <- format(Sys.time(), "%Y%m%d_%H%M%S")
   
+  # originele naam + timestamp
+  orig_name <- tools::file_path_sans_ext(basename(png_path))
+  ext       <- tools::file_ext(png_path)
+  
+  fname <- paste0(orig_name, "_", ts, ".", ext)
+  target_path <- fname
+
+    
   # PNG lezen en base64 encoderen
   file_bytes <- readBin(png_path, what = "raw", n = file.info(png_path)$size)
   file_base64 <- jsonlite::base64_enc(file_bytes)
