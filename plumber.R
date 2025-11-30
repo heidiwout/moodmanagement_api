@@ -1,12 +1,14 @@
+# plumber.R
 library(plumber)
 library(jsonlite)
 library(data.table)
-library(magick)
+library(stringr)
 
 source("bereken_scores.R")
 source("genereer_png.R")
 source("genereer_emailtekst.R")
 source("upload_to_github.R")
+
 
 #* Health check
 #* @get /health
@@ -14,56 +16,112 @@ function() {
   list(status = "ok", message = "Mood Management API draait")
 }
 
-#* Verwerk 1 formulierinzending
+
+#* Verwerk 1 formulierinzending vanuit Wix
 #* @post /process
 function(req) {
   
   raw <- req$postBody
   
-  # ---- 1) Probeer JSON ----
+  # -----------------------------------
+  # 1) Probeer JSON decoderen
+  # -----------------------------------
   input <- tryCatch(
     jsonlite::fromJSON(raw),
     error = function(e) NULL
   )
   
-  # ---- 2) Als geen JSON → probeer form-data van Wix ----
   if (is.null(input)) {
-    input <- tryCatch(
-      as.list(parseQueryString(raw)),
-      error = function(e) NULL
-    )
+    stop("Kon de payload niet als JSON lezen.")
   }
   
-  # ---- 3) Safety fallback ----
-  if (is.null(input)) {
-    stop("Kon de payload niet lezen. Noch JSON noch form-data.")
-  }
-  
-  # ---- 4) DEBUG LOGGEN ZONDER IETS TE WIJZIGEN ----
-  print("----- RAW PAYLOAD ONTVANGEN VAN WIX / JSON ----")
+  print("===== RAW JSON VAN WIX =====")
   print(input)
   
-  # ---- 5) Verplichte velden (nog niets veranderen aan namen!) ----
-  naam  <- input$Voornaam
-  email <- input$E.mail   # We laten dit staan zolang we niet weten wat Wix stuurt
+  # -----------------------------------
+  # 2) Extractie van Wix-form submission
+  # -----------------------------------
+  # Wix structuur:
+  #   input$data$submissions$label
+  #   input$data$submissions$value
+  # + voornaam & email dubbele keer aanwezig
   
-  if (is.null(naam) || is.null(email)) {
-    stop("Voornaam en E.mail zijn verplicht in de payload.")
+  if (!"data" %in% names(input)) {
+    stop("Wix JSON bevat geen 'data' veld.")
   }
   
-  # ---- 6) Scores berekenen ----
-  scores <- bereken_scores(input)
+  d <- input$data
   
-  # ---- 7) PNG genereren ----
+  # -----------------------------------
+  # 3) Submissions flattenen naar named list
+  # -----------------------------------
+  flat <- list()
+  
+  # Voornaam & email apart (zekerheid)
+  if (!is.null(d$submissions)) {
+    subs <- d$submissions
+    if (all(c("label","value") %in% names(subs))) {
+      for (i in seq_len(nrow(subs))) {
+        label <- subs$label[i]
+        value <- subs$value[i]
+        if (label != "" && !is.null(value)) {
+          flat[[label]] <- value
+        }
+      }
+    }
+  }
+  
+  # Extra Wix velden (field:xyz)
+  wix_fields <- grep("^field:", names(d), value = TRUE)
+  for (f in wix_fields) {
+    clean_name <- sub("^field:", "", f)
+    flat[[clean_name]] <- d[[f]]
+  }
+  
+  # Tevens expliciete voornaam & e-mail
+  if (!is.null(d$`field:voornaam_24fb`)) {
+    flat[["Voornaam"]] <- d$`field:voornaam_24fb`
+  }
+  if (!is.null(d$`field:e_mail_b046`)) {
+    flat[["E-mail"]] <- d$`field:e_mail_b046`
+  }
+  
+  print("===== FLAT INPUT =====")
+  print(flat)
+  
+  # -----------------------------------
+  # 4) Controle verplichte velden
+  # -----------------------------------
+  naam  <- flat[["Voornaam"]]
+  email <- flat[["E-mail"]]
+  
+  if (is.null(naam) || is.null(email) || naam == "" || email == "") {
+    stop("Voornaam en E-mail moeten aanwezig zijn in de Wix payload.")
+  }
+  
+  # -----------------------------------
+  # 5) Scores berekenen
+  # -----------------------------------
+  scores <- bereken_scores(flat)
+  
+  # -----------------------------------
+  # 6) PNG genereren
+  # -----------------------------------
   png_path <- genereer_png(scores, id = email)
   
-  # ---- 8) Publieke URL genereren ----
+  # -----------------------------------
+  # 7) Publieke URL voor de PNG
+  # -----------------------------------
   png_url <- upload_to_github(png_path)
   
-  # ---- 9) Emailtekst genereren ----
+  # -----------------------------------
+  # 8) Emailtekst genereren
+  # -----------------------------------
   email_text <- genereer_emailtekst(scores, naam)
   
-  # ---- 10) JSON response naar Wix ----
+  # -----------------------------------
+  # 9) Output terug naar Wix automation
+  # -----------------------------------
   list(
     Voornaam        = naam,
     E_mail          = email,
