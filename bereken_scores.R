@@ -56,7 +56,7 @@ bereken_scores <- function(input) {
     dt[[paste0(col, "_score")]] <- ifelse(
       dt[[col]] == "" | is.na(dt[[col]]),
       0,
-      stringr::str_count(dt[[col]], ";") + 1
+      stringr::str_count(dt[[col]], ",") + 1
     )
   }
   
