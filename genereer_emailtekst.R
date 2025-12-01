@@ -93,6 +93,6 @@ genereer_emailtekst <- function(scores, naam) {
   
   # 5. Samenvoegen (zonder **, dat is voor markdown; voor platte tekst kan je ze weglaten of vervangen)
   full <- paste0(#intro, 
-    body, uitleg)#, afsluit)
+    body)#, uitleg)#, afsluit)
   return(full)
 }
