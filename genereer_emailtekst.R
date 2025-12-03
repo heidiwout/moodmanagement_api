@@ -37,25 +37,25 @@ genereer_emailtekst <- function(scores, naam) {
     
     if (b == "Serenity_pct") {
       body <- paste0(
-        "In jouw profiel komt vooral <b>Serenity</b> naar voren als hoogste score. ",
+        "In jouw profiel komt vooral **Serenity** naar voren als hoogste score. ",
         "Dat wijst erop dat je momenteel vooral behoefte hebt aan rust, verzachting en mentale ontspanning. ",
         "Serenity ondersteunt je wanneer je hoofd druk is, wanneer je spanning wil loslaten en wanneer je zenuwstelsel om ontprikkeling vraagt.\n\n"
       )
     } else if (b == "CitrusBliss_pct") {
       body <- paste0(
-        "In jouw profiel komt vooral <b>Citrus Bliss</b> naar voren als hoogste score. ",
+        "In jouw profiel komt vooral **Citrus Bliss** naar voren als hoogste score. ",
         "Dit wijst op een behoefte aan lichtheid, plezier, motivatie en een zachte emotionele uplift. ",
         "Citrus Bliss helpt wanneer je wat meer speelsheid, energie en optimisme wil voelen in je dagelijks leven.\n\n"
       )
     } else if (b == "Balance_pct") {
       body <- paste0(
-        "In jouw profiel staat <b>Balance</b> het hoogst. ",
+        "In jouw profiel staat **Balance** het hoogst. ",
         "Dat vertelt dat je systeem vooral baat heeft bij gronding, stabiliteit en terugkeren naar jezelf. ",
         "Balance helpt je om uit je hoofd te zakken en je energie te verankeren, zeker wanneer er veel beweegt in je omgeving.\n\n"
       )
     } else if (b == "Adaptiv_pct") {
       body <- paste0(
-        "Bij jou staat <b>Adaptiv</b> het hoogst. ",
+        "Bij jou staat **Adaptiv** het hoogst. ",
         "Dit wijst op een behoefte aan mentale flexibiliteit, stressregulatie en meer ruimte in je hoofd. ",
         "Adaptiv ondersteunt je wanneer er veel prikkels zijn of wanneer je makkelijker wil schakelen tussen verschillende rollen en verantwoordelijkheden.\n\n"
       )
@@ -64,7 +64,7 @@ genereer_emailtekst <- function(scores, naam) {
     # Twee toppers
     combo <- paste(top_nice, collapse = " en ")
     body <- paste0(
-      "In jouw profiel springen <b>", combo, "</b> er samen uit als hoogste scores. ",
+      "In jouw profiel springen **", combo, "** er samen uit als hoogste scores. ",
       "Dat betekent dat beide blends op dit moment mooi aansluiten bij jouw emotionele noden. ",
       "Je kan intuïtief kiezen met welke je wil starten, of ze op verschillende momenten van de dag inzetten.\n\n"
     )
